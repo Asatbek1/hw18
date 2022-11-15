@@ -1,25 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import useFetch from "./helpers/hooks/useFetch";
+import "./App.css";
+const App = () => {
+  const [todo, setTodo] = useState("");
+  const URL = "https://add-todo-1eae2-default-rtdb.firebaseio.com/todos.json";
+  const { todos, getFetchTodo, removeItenHandler, addItem } = useFetch([], URL);
+  const addTodoHandler = (e) => {
+    e.preventDefault();
+    addItem({ text: todo });
+    setTodo("");
+  };
 
-function App() {
+  useEffect(() => {
+    getFetchTodo();
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <form onSubmit={addTodoHandler}>
+        <input
+          type="text"
+          value={todo}
+          onChange={(e) => setTodo(e.target.value)}
+        />
+        <button>Add</button>
+      </form>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>
+            <span>{todo.text}</span>
+            <button onClick={() => removeItenHandler(todo.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
-}
+};
 
 export default App;
